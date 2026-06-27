@@ -1,57 +1,39 @@
-# Deploying This App To Vercel
+# Deploying This App To Vercel with Supabase
 
-This app is now a Next.js-only app. Do not run the old Express `server.js` for deployment.
+This Next.js application has been migrated from local JSON/MySQL storage to PostgreSQL on Supabase via Prisma.
 
-## Project Settings
+## Project Settings on Vercel
 
-If deploying from the GitHub repo root, set Vercel's Root Directory to:
+If deploying from the GitHub repo root, set Vercel's **Root Directory** to:
 
 ```text
 todo-next
 ```
 
-Framework preset: Next.js
+**Framework Preset:** Next.js
 
-Build command:
-
+**Build Command:**
+To ensure your database schema is pushed to Supabase during deployment, set the build command to:
 ```text
-npm run build
+npx prisma db push && npm run build
 ```
 
-Install command:
-
+**Install Command:**
 ```text
 npm install
 ```
 
-Output directory: leave blank/default.
-
 ## Required Environment Variables
 
-Use your Aiven MySQL database for production. Add these in Vercel under:
-
-Project -> Settings -> Environment Variables
-
-Recommended single URL form:
+You must add the following environment variable in your Vercel Project Settings under **Settings -> Environment Variables**:
 
 ```env
-DATABASE_URL=mysql://avnadmin:YOUR_AIVEN_PASSWORD@mysql-todo-123-gradding-a5c3.j.aivencloud.com:25801/defaultdb
-MYSQL_SSL=true
+DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@db.liykoignyksydygunslj.supabase.co:5432/postgres
 ```
 
-Alternative separate form:
+Make sure to replace `YOUR_PASSWORD` with the password of your Supabase database. Note that if your password contains special characters (like `@`), they must be URL-encoded (e.g., `@` becomes `%40`).
 
-```env
-MYSQL_HOST=mysql-todo-123-gradding-a5c3.j.aivencloud.com
-MYSQL_PORT=25801
-MYSQL_USER=avnadmin
-MYSQL_PASSWORD=YOUR_AIVEN_PASSWORD
-MYSQL_DATABASE=defaultdb
-MYSQL_SSL=true
-```
+## Local Development vs Production
 
-## Important
-
-The old `Demo html/To do list project/server.js` contains a hardcoded database password. Rotate that password in Aiven before deploying publicly.
-
-Local development without database env vars uses `data/db.json`. Vercel production must use Aiven/MySQL because serverless file writes are not persistent.
+- **Vercel Runtime:** The Vercel runtime environment fully supports IPv6 routing, meaning it will connect directly to your Supabase host `db.liykoignyksydygunslj.supabase.co` on the default port `5432` without issues.
+- **Local Development:** If your local development environment does not support IPv6 routing, direct connection might fail. If so, enable Supabase Connection Pooling (Supavisor) in the Supabase Dashboard, and use the pooler connection string (port 6543 or 5432 with pooler host).

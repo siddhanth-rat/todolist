@@ -40,5 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# local JSON fallback database
-/data/db.json
+# prisma generated client
+/lib/generated/prisma

@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String @id
+  username      String @unique
+  password_hash String
+  display_name  String @default("")
+  email         String @default("")
+
+  tasks Task[]
+}
+
+model Task {
+  id         String @id
+  user_id    String
+  task_text  String
+  task_date  String @default("")
+  task_time  String @default("")
+  priority   String @default("none")
+  status     String @default("Pending")
+  created_at BigInt
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
